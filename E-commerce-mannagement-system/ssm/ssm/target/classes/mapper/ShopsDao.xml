@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zd.dao.ShopsDao">
+    <resultMap id="BaseResultMap" type="com.zd.domain.Shops">
+        <id column="shop_id" jdbcType="VARCHAR" property="shopId" />
+        <result column="good_rate_percentage" jdbcType="REAL" property="goodRatePercentage" />
+        <result column="service_score" jdbcType="VARCHAR" property="serviceScore" />
+        <result column="delivery_score" jdbcType="VARCHAR" property="deliveryScore" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="all_item_count" jdbcType="INTEGER" property="allItemCount" />
+        <result column="fans_num" jdbcType="INTEGER" property="fansNum" />
+        <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
+        <result column="state" jdbcType="INTEGER" property="state" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        shop_id, good_rate_percentage, service_score, delivery_score,title,
+        all_item_count, fans_num, pic_url, state
+    </sql>
+    <!--查询所有的店铺信息-->
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM shops
+    </select>
+    <!--根据店铺名称模糊查询-->
+    <select id="findByName" parameterType="string"  resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM shops where title like #{title}
+    </select>
+    <!--删除店铺-->
+    <delete id="delete" parameterType="java.lang.String">
+        delete from shops
+        where shop_id = #{shopId}
+    </delete>
+    <!--增加店铺-->
+    <insert id="add" parameterType="com.zd.domain.Shops">
+    insert into shops (shop_id, good_rate_percentage, service_score,
+      delivery_score, title, all_item_count,
+      fans_num, pic_url, state
+      )
+    values (#{shopId,jdbcType=VARCHAR}, #{goodRatePercentage,jdbcType=REAL}, #{serviceScore,jdbcType=VARCHAR},
+      #{deliveryScore,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{allItemCount,jdbcType=INTEGER},
+      #{fansNum,jdbcType=INTEGER}, #{picUrl,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}
+      )
+  </insert>
+    <!--根据id查询店铺-->
+    <select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from shops
+        where shop_id = #{shopId,jdbcType=VARCHAR}
+    </select>
+    <!--根据店铺名称查询店铺-->
+    <select id="findTitle" parameterType="string"  resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM shops where title=#{title}
+    </select>
+    <!--更新店铺信息-->
+    <update id="update" parameterType="com.zd.domain.Shops">
+        update shops
+        set good_rate_percentage = #{goodRatePercentage,jdbcType=REAL},
+        service_score = #{serviceScore,jdbcType=VARCHAR},
+        delivery_score = #{deliveryScore,jdbcType=VARCHAR},
+        title = #{title,jdbcType=VARCHAR},
+        all_item_count = #{allItemCount,jdbcType=INTEGER},
+        fans_num = #{fansNum,jdbcType=INTEGER},
+        pic_url = #{picUrl,jdbcType=VARCHAR},
+        state = #{state,jdbcType=INTEGER}
+        where shop_id = #{shopId,jdbcType=VARCHAR}
+    </update>
+</mapper>

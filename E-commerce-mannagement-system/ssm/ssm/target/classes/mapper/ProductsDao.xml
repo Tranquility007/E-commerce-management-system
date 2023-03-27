@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zd.dao.ProductsDao">
+  <resultMap id="productsMap" type="com.zd.domain.Products">
+    <id column="product_id" jdbcType="VARCHAR" property="productId" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="commodity_id" jdbcType="VARCHAR" property="commodityId" />
+    <result column="tab_id" jdbcType="VARCHAR" property="tabId" />
+    <result column="origin_price" jdbcType="REAL" property="originPrice" />
+    <result column="price" jdbcType="REAL" property="price" />
+    <result column="sale_num" jdbcType="INTEGER" property="saleNum" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="image" jdbcType="VARCHAR" property="image" />
+    <result column="is_free_postage" jdbcType="INTEGER" property="isFreePostage" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    product_id, title, commodity_id, tab_id, origin_price, price, sale_num, url, image, 
+    is_free_postage, state
+  </sql>
+
+  <!--查询所有商品列表（包括类型名称）-->
+  <select id="findAll" resultType="com.zd.dto.ProductsDto">
+ SELECT  product_id productId, title, commodity_id commodityId, p.tab_id tabId, origin_price originPrice , price, sale_num saleNum, url, image,
+    is_free_postage isFreePostage, p.state,t.name tabName FROM products p,tabs t WHERE p.tab_id=t.`tab_id`
+  </select>
+
+  <!--根据tabid查询商品信息-->
+  <!--查询所有商品列表（包括类型名称）-->
+  <select id="findByTabId" parameterType="string" resultType="com.zd.dto.ProductsDto">
+    SELECT  product_id productId, title, commodity_id commodityId, p.tab_id tabId, origin_price originPrice , price, sale_num saleNum, url, image,
+    is_free_postage isFreePostage, p.state,t.name tabName FROM products p,tabs t WHERE p.tab_id=t.`tab_id` AND p.`tab_id`=#{id}
+  </select>
+
+    <!--根据商品名称模糊查询-->
+    <select id="findByName" parameterType="string" resultType="com.zd.dto.ProductsDto">
+               SELECT  product_id productId, title, commodity_id commodityId, p.tab_id tabId, origin_price originPrice , price, sale_num saleNum, url, image,
+    is_free_postage isFreePostage, p.state,t.name tabName FROM products p,tabs t WHERE p.tab_id=t.`tab_id` AND p.title LIKE #{name}
+    </select>
+    
+    <!--根据id删除商品-->
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from products
+        where product_id = #{productId,jdbcType=VARCHAR}
+    </delete>
+
+  <!--增加商品信息-->
+  <insert id="save" parameterType="com.zd.domain.Products">
+    insert into products (product_id, title, commodity_id,
+    tab_id, origin_price, price,
+    sale_num, url, image,
+    is_free_postage, state)
+    values (#{productId,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{commodityId,jdbcType=VARCHAR},
+    #{tabId,jdbcType=VARCHAR}, #{originPrice,jdbcType=REAL}, #{price,jdbcType=REAL},
+    #{saleNum,jdbcType=INTEGER}, #{url,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR},
+    #{isFreePostage,jdbcType=INTEGER}, #{state,jdbcType=INTEGER})
+  </insert>
+
+  <!--根据id查询商品信息-->
+  <select id="findById" parameterType="java.lang.String" resultMap="productsMap">
+    select
+    <include refid="Base_Column_List" />
+    from products
+    where product_id = #{productId,jdbcType=VARCHAR}
+  </select>
+
+  <!--更新商品信息-->
+  <update id="update" parameterType="com.zd.domain.Products">
+    update products
+    set title = #{title,jdbcType=VARCHAR},
+    commodity_id = #{commodityId,jdbcType=VARCHAR},
+    tab_id = #{tabId,jdbcType=VARCHAR},
+    origin_price = #{originPrice,jdbcType=REAL},
+    price = #{price,jdbcType=REAL},
+    sale_num = #{saleNum,jdbcType=INTEGER},
+    url = #{url,jdbcType=VARCHAR},
+    image = #{image,jdbcType=VARCHAR},
+    is_free_postage = #{isFreePostage,jdbcType=INTEGER},
+    state = #{state,jdbcType=INTEGER}
+    where product_id = #{productId,jdbcType=VARCHAR}
+  </update>
+    <!--根据淘宝id查询商品-->
+    <select id="findByCid" parameterType="java.lang.String" resultMap="productsMap">
+        select
+        <include refid="Base_Column_List" />
+        from products
+        where  commodity_id = #{commodityId,jdbcType=VARCHAR}
+    </select>
+</mapper>
